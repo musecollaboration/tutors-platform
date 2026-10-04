@@ -1,0 +1,19 @@
+# .kodaignore для Python-проекта
+
+# Виртуальные окружения
+
+venv/
+.venv/
+env/
+.env/
+
+# Зависимости
+
+node_modules/
+vendor/
+bower_components/
+
+# ОС
+
+.DS_Store
+Thumbs.d

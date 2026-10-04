@@ -1,0 +1,41 @@
+Приоритет источников при конфликте: документация библиотеки → .kodarules → скиллы → KODA.md.
+
+Отвечай на русском языке.
+
+Слои: domain ← application ← infrastructure/presentation. Обратные импорты запрещены.
+domain не импортирует FastAPI, SQLAlchemy, Pydantic, Dishka.
+application не импортирует infrastructure, presentation, Dishka.
+presentation не импортирует infrastructure.
+Импорты между модулями — только через public.py.
+Ручное создание зависимостей вне bootstrap — запрещено.
+
+DI — Dishka. Бизнес-зависимости через FromDishka[T], не через Depends.
+Depends — только для FastAPI-native вещей (OAuth2PasswordBearer, HTTPBearer, APIKeyHeader).
+Роутеры используют route_class=DishkaRoute. FromDishka[T] активируется через DishkaRoute или @inject.
+@inject нужен для Depends-функций (auth), WebSocket и чужих роутеров.
+FastapiProvider() добавляется в контейнер, если в провайдерах используется Request.
+Провайдеры Dishka модулей — в bootstrap/providers/<module>.py. Общие провайдеры (SessionFactory, UnitOfWork, Config) — в core/providers.py.
+get_session() как FastAPI-зависимость не создавать. Сессия — только через провайдер Dishka.
+Сессия и UnitOfWork живут в Scope.REQUEST и получают одну и ту же сессию.
+flush в репозитории, commit в use case через UnitOfWork. Провайдер сессии не коммитит.
+
+Use case — обычный класс (@dataclass(slots=True)), зависимости в конструкторе, единственный публичный метод async execute(...). Никаких __call__.
+Сущности — @dataclass(slots=True, eq=False) + __eq__/__hash__ по _id.
+Поля сущностей — _name + @property, без публичных сеттеров.
+Доменные методы идемпотентны: повторный вызов — return, без исключения.
+Сообщения доменных исключений — на английском. Русский — только в presentation.
+Порты принимают и возвращают VO и сущности, не примитивы и не ORM-модели.
+
+Зависимости не могут быть «голыми» типами (str, int, dict, list). Оборачивать в NewType или dataclass.
+
+SQLAlchemy: select() вместо query(), Mapped[] вместо Column().
+PK в моделях — Uuid (sqlalchemy.Uuid, default=uuid4), не int.
+lazy="select" запрещён. delete-orphan в cascade запрещён (в любом виде).
+expire_on_commit=False в async_sessionmaker — обязательно.
+После IntegrityError — await session.rollback().
+
+Пакетный менеджер — poetry. Не использовать uv, pip-tools, pipenv.
+Команды: poetry add, poetry remove, poetry install, poetry lock, poetry run.
+
+Не добавляй новые зависимости без подтверждения.
+Не коммить .env — только .env.example.

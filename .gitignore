@@ -1,0 +1,42 @@
+# Окружение / секреты
+.env
+.env.*
+!.env.example
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+
+# Poetry / pip
+.venv/
+pip-wheel-metadata/
+
+# Node / Nuxt
+node_modules/
+.nuxt/
+.output/
+.nitro/
+.cache/
+dist/
+*.log
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+
+# Личные заметки
+DEEPSEEK_CONTEXT.md
+plan.md
