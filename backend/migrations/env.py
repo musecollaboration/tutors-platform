@@ -6,7 +6,7 @@ from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
-import app.bootstrap.orm_registry  # noqa: F401
+import app.bootstrap.orm_registry
 from app.core.config import settings
 from app.core.db import Base
 
