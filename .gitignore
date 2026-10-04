@@ -1,42 +1,76 @@
-# Окружение / секреты
+# ─── Окружение / секреты ───────────────────────────────────────────────
 .env
 .env.*
 !.env.example
 
-# Python
+# ─── Python ────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg
+*.egg-info/
+.eggs/
+build/
+dist/
+sdist/
+
+# ─── Виртуальные окружения ─────────────────────────────────────────────
 .venv/
 venv/
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
+env/
+
+# ─── Тесты / покрытие ──────────────────────────────────────────────────
 .pytest_cache/
+.tox/
+.nox/
+.hypothesis/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+*.cover
+
+# ─── Линтеры / проверка типов ──────────────────────────────────────────
 .ruff_cache/
 .mypy_cache/
-.coverage
-htmlcov/
-dist/
-build/
-*.egg-info/
+.dmypy.json
+dmypy.json
+.pytype/
+.pyre/
 
-# Poetry / pip
-.venv/
+# ─── Jupyter ───────────────────────────────────────────────────────────
+.ipynb_checkpoints/
+
+# ─── Poetry / pip ──────────────────────────────────────────────────────
 pip-wheel-metadata/
+pip-log.txt
 
-# Node / Nuxt
+# ─── Локальные БД ──────────────────────────────────────────────────────
+*.db
+*.sqlite
+*.sqlite3
+
+# ─── Node / фронтенд ───────────────────────────────────────────────────
 node_modules/
 .nuxt/
 .output/
 .nitro/
+.next/
+.turbo/
+.vercel/
+.svelte-kit/
+.parcel-cache/
+.vite/
 .cache/
-dist/
 *.log
 
-# IDE / OS
+# ─── IDE / OS ──────────────────────────────────────────────────────────
 .vscode/
 .idea/
 .DS_Store
+Thumbs.db
+desktop.ini
 
-# Личные заметки
+# ─── Личные заметки ────────────────────────────────────────────────────
 DEEPSEEK_CONTEXT.md
 plan.md
