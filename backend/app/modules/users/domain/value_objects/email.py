@@ -1,5 +1,6 @@
 import re
 from dataclasses import dataclass
+from typing import Never
 
 from app.modules.users.domain.exceptions import InvalidEmailError
 
@@ -31,27 +32,27 @@ class Email:
 
     def _validate(self, value: str) -> None:
         if len(value) > _MAX_EMAIL_LEN or _CONTROL_OR_SPACE.search(value):
-            raise self._fail()
+            self._fail()
 
         local, sep, domain = value.partition("@")
         if not sep or "@" in domain:
-            raise self._fail()
+            self._fail()
 
         if len(local) > _MAX_LOCAL_LEN or not _LOCAL_PART.match(local):
-            raise self._fail()
+            self._fail()
 
         if len(domain) > _MAX_DOMAIN_LEN or "." not in domain:
-            raise self._fail()
+            self._fail()
 
         labels = domain.split(".")
         if any(not _DOMAIN_LABEL.match(label) for label in labels):
-            raise self._fail()
+            self._fail()
 
         # Числовой TLD — адрес недоставляем.
         if labels[-1].isdigit():
-            raise self._fail()
+            self._fail()
 
-    def _fail(self) -> InvalidEmailError:
+    def _fail(self) -> Never:
         raise InvalidEmailError(f"Invalid email: {self.value!r}")
 
     def __str__(self) -> str:
