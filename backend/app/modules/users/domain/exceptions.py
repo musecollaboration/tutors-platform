@@ -5,20 +5,16 @@ from app.core.domain.exceptions import (
 
 
 class InvalidFullNameError(InvalidDataError):
-    def __init__(self, message: str) -> None:
-        super().__init__(message)
+    """Full name failed validation."""
 
 
 class InvalidEmailError(InvalidDataError):
-    def __init__(self, message: str) -> None:
-        super().__init__(message)
+    """Email failed validation."""
 
 
 class EmailAlreadyTakenError(AlreadyExistsError):
-    def __init__(self, message: str) -> None:
-        super().__init__(message)
+    """Account with the same email already exists."""
 
 
 class InvalidPasswordError(InvalidDataError):
-    def __init__(self, message: str) -> None:
-        super().__init__(message)
+    """Password failed validation."""
