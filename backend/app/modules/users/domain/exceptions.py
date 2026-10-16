@@ -1,6 +1,7 @@
 from app.core.domain.exceptions import (
     AlreadyExistsError,
     InvalidDataError,
+    NotFoundError,
 )
 
 
@@ -18,3 +19,11 @@ class EmailAlreadyTakenError(AlreadyExistsError):
 
 class InvalidPasswordError(InvalidDataError):
     """Password failed validation."""
+
+
+class UserNotFoundError(NotFoundError):
+    """User does not exist."""
+
+
+class AccountNotFoundError(NotFoundError):
+    """Account does not exist."""

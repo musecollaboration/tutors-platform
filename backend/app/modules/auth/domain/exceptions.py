@@ -1,4 +1,4 @@
-from app.core.domain.exceptions import UnauthorizedError
+from app.core.domain.exceptions import NotFoundError, UnauthorizedError
 
 
 class InvalidTokenError(UnauthorizedError):
@@ -15,3 +15,7 @@ class TokenRevokedError(InvalidTokenError):
 
 class InvalidCredentialsError(UnauthorizedError):
     """Login failed: unknown user, wrong password, or locked account."""
+
+
+class RefreshTokenNotFoundError(NotFoundError):
+    """Refresh token does not exist."""

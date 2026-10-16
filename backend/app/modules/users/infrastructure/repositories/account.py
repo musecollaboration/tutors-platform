@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.users.domain.entities.account import Account
-from app.modules.users.domain.exceptions import EmailAlreadyTakenError
+from app.modules.users.domain.exceptions import AccountNotFoundError, EmailAlreadyTakenError
 from app.modules.users.domain.value_objects.email import Email
 from app.modules.users.infrastructure.mappers import account_to_entity, account_to_model
 from app.modules.users.infrastructure.models import AccountModel
@@ -42,7 +42,7 @@ class SqlAlchemyAccountRepository:
     async def update(self, account: Account) -> None:
         model = await self._session.get(AccountModel, account.id)
         if model is None:
-            raise LookupError(f"AccountModel {account.id} not found")
+            raise AccountNotFoundError(f"Account {account.id} not found")
         model.email = account.email.value
         model.password_hash = account.password_hash
         model.is_locked = account.is_locked
