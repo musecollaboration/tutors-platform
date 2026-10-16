@@ -1,7 +1,7 @@
-from app.core.domain.exceptions import DomainError
+from app.core.domain.exceptions import UnauthorizedError
 
 
-class InvalidTokenError(DomainError):
+class InvalidTokenError(UnauthorizedError):
     """Token is malformed or has invalid signature."""
 
 
@@ -13,5 +13,5 @@ class TokenRevokedError(InvalidTokenError):
     """Token has been revoked (logout, rotation)."""
 
 
-class InvalidCredentialsError(DomainError):
+class InvalidCredentialsError(UnauthorizedError):
     """Login failed: unknown user, wrong password, or locked account."""

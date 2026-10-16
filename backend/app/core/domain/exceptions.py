@@ -10,6 +10,10 @@ class AlreadyExistsError(DomainError):
     """Entity with the same unique attribute already exists."""
 
 
+class UnauthorizedError(DomainError):
+    """Actor is not authenticated."""
+
+
 class PermissionDeniedError(DomainError):
     """Current actor is not allowed to perform the action."""
 

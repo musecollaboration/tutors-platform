@@ -8,16 +8,12 @@ from app.core.domain.exceptions import (
     NotFoundError,
     PermissionDeniedError,
     RateLimitExceededError,
-)
-from app.modules.auth.domain.exceptions import (
-    InvalidCredentialsError,
-    InvalidTokenError,
+    UnauthorizedError,
 )
 
 # Порядок важен: от частных к общим (isinstance идёт сверху вниз)
 _STATUS_MAP: list[tuple[type[DomainError], int]] = [
-    (InvalidCredentialsError, 401),
-    (InvalidTokenError, 401),
+    (UnauthorizedError, 401),
     (RateLimitExceededError, 429),
     (NotFoundError, 404),
     (AlreadyExistsError, 409),
