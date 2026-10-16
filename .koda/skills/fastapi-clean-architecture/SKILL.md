@@ -558,10 +558,14 @@ from app.core.domain.exceptions import (
     InvalidDataError,
     NotFoundError,
     PermissionDeniedError,
+    RateLimitExceededError,
+    UnauthorizedError,
 )
 
 # Порядок важен: от частных к общим
 _STATUS_MAP: list[tuple[type[DomainError], int]] = [
+    (UnauthorizedError, 401),
+    (RateLimitExceededError, 429),
     (NotFoundError, 404),
     (AlreadyExistsError, 409),
     (PermissionDeniedError, 403),
@@ -582,6 +586,7 @@ def register_error_handlers(app: FastAPI) -> None:
 - Домен бросает только доменные исключения; HTTP-статус назначается в **одном** месте.
 - В роутерах нет `try/except`; в домене нет `HTTPException`.
 - Обработчик регистрируется один раз в `bootstrap`.
+- **Двухуровневая иерархия: `core` — категории (статусы), модули — конкретика.** `_STATUS_MAP` ссылается только на `core.domain.exceptions`; bootstrap не импортирует исключения модулей.
 - Порядок в `_STATUS_MAP` — от частных к общим (`isinstance` идёт сверху вниз).
 - Маппинг в HTTP — только для HTTP-точки входа. Воркеры, CLI и планировщики обрабатывают `DomainError` **сами**: логируют и решают, повторять или нет.
 
