@@ -562,23 +562,34 @@ from app.core.domain.exceptions import (
     UnauthorizedError,
 )
 
-# Порядок важен: от частных к общим
-_STATUS_MAP: list[tuple[type[DomainError], int]] = [
-    (UnauthorizedError, 401),
-    (RateLimitExceededError, 429),
-    (NotFoundError, 404),
-    (AlreadyExistsError, 409),
-    (PermissionDeniedError, 403),
-    (InvalidDataError, 422),
-    (DomainError, 400),
-]
+# Категории: core-тип → HTTP-статус. Порядок не важен: поиск идёт по __mro__,
+# который сам выдаёт частные классы раньше общих.
+_STATUS_MAP: dict[type[DomainError], int] = {
+    UnauthorizedError: 401,
+    RateLimitExceededError: 429,
+    NotFoundError: 404,
+    AlreadyExistsError: 409,
+    PermissionDeniedError: 403,
+    InvalidDataError: 422,
+    DomainError: 400,
+}
+
+# Недостижимо, пока DomainError есть в _STATUS_MAP: страховка от его удаления.
+_FALLBACK_STATUS = 500
+
+
+def _status_for(exc: DomainError) -> int:
+    """Resolve HTTP status by walking the MRO from specific classes to general."""
+    for cls in type(exc).__mro__:
+        if cls in _STATUS_MAP:
+            return _STATUS_MAP[cls]
+    return _FALLBACK_STATUS
 
 
 def register_error_handlers(app: FastAPI) -> None:
     @app.exception_handler(DomainError)
     async def handle_domain_error(request: Request, exc: DomainError) -> JSONResponse:
-        status = next(code for cls, code in _STATUS_MAP if isinstance(exc, cls))
-        return JSONResponse(status_code=status, content={"detail": str(exc)})
+        return JSONResponse(status_code=_status_for(exc), content={"detail": str(exc)})
 ```
 
 **Правила:**
@@ -587,7 +598,7 @@ def register_error_handlers(app: FastAPI) -> None:
 - В роутерах нет `try/except`; в домене нет `HTTPException`.
 - Обработчик регистрируется один раз в `bootstrap`.
 - **Двухуровневая иерархия: `core` — категории (статусы), модули — конкретика.** `_STATUS_MAP` ссылается только на `core.domain.exceptions`; bootstrap не импортирует исключения модулей.
-- Порядок в `_STATUS_MAP` — от частных к общим (`isinstance` идёт сверху вниз).
+- Статус ищется обходом `type(exc).__mro__` от частного к общему: конкретное исключение модуля получает статус своей категории, а `DomainError` в словаре работает как catch-all с 400. Порядок ключей в `_STATUS_MAP` не важен — за «частное раньше общего» отвечает сам `__mro__`.
 - Маппинг в HTTP — только для HTTP-точки входа. Воркеры, CLI и планировщики обрабатывают `DomainError` **сами**: логируют и решают, повторять или нет.
 
 Пример роутера:
