@@ -152,6 +152,10 @@ container = make_async_container(*provider, validation_settings=settings)
 
 Ловит ошибки конфигурации контейнера на старте, а не в рантайме.
 
+> `ValidationSettings(implicit_override=True)` **запрещает** неявное переопределение, а не разрешает. Все три флага означают «ловить нарушение», а не «разрешать поведение». Легко прочитать наоборот.
+
+В проекте константа лежит в `backend/tests/validation.py` (`VALIDATION_SETTINGS`), импортируется в conftest'ах — не дублировать по файлам.
+
 ### Воркеры — REQUEST-scope на задачу
 
 Каждая задача воркера — новый REQUEST-scope. Не держать одну сессию на весь воркер:

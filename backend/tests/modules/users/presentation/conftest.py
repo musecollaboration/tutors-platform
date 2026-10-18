@@ -1,7 +1,7 @@
 from collections.abc import AsyncIterator
 
 import pytest
-from dishka import AsyncContainer, Provider, Scope, ValidationSettings, make_async_container, provide
+from dishka import AsyncContainer, Provider, Scope, make_async_container, provide
 from fastapi import FastAPI
 
 from app.bootstrap.http.app import create_app
@@ -16,6 +16,7 @@ from tests.modules.users.application.fakes import (
     FakeUnitOfWork,
     FakeUserRepository,
 )
+from tests.validation import VALIDATION_SETTINGS
 
 
 class TestUsersProvider(Provider):
@@ -34,17 +35,9 @@ class TestUsersProvider(Provider):
     register_user = provide(RegisterUser)
 
 
-# Строгая валидация графа: конфликты фабрик ловятся при создании контейнера.
-_VALIDATION_SETTINGS = ValidationSettings(
-    implicit_override=True,
-    nothing_overridden=True,
-    nothing_decorated=True,
-)
-
-
 @pytest.fixture
 async def test_container() -> AsyncIterator[AsyncContainer]:
-    container = make_async_container(TestUsersProvider(), validation_settings=_VALIDATION_SETTINGS)
+    container = make_async_container(TestUsersProvider(), validation_settings=VALIDATION_SETTINGS)
     yield container
     await container.close()
 

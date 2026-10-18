@@ -21,7 +21,12 @@ class SqlAlchemyUserRepository:
     async def add(self, user: User) -> User:
         model = user_to_model(user)
         self._session.add(model)
+        # Flush в репозитории, commit в use case (см. KODA.md).
+        # IntegrityError здесь не ловим: в users нет уникальных колонок,
+        # а id приходит из uuid4() — переводить в доменную ошибку нечего.
         await self._session.flush()
+        # Маппим обратно из модели: так подхватываются значения, заполненные БД
+        # (server defaults, триггеры), и сохраняется доменная валидация на входе.
         return user_to_entity(model)
 
     async def update(self, user: User) -> None:

@@ -1,10 +1,12 @@
 # ruff: noqa: I001
+from app.bootstrap.container import create_container
 from app.bootstrap.http.app import create_app
 from httpx import ASGITransport
 from fastapi import FastAPI
 import pytest
 import httpx
 from collections.abc import AsyncIterator
+from tests.validation import VALIDATION_SETTINGS
 import os
 
 # Настройки должны быть заданы до импорта приложения: реальные переменные
@@ -15,7 +17,9 @@ os.environ.setdefault("DATABASE_URL", "postgresql+asyncpg://test:test@localhost:
 @pytest.fixture
 def app() -> FastAPI:
     """Default app with the production container."""
-    return create_app()
+    # Прод-граф тоже валидируем: конфликты провайдеров падают при создании
+    # контейнера, а не превращаются в ложно-зелёный тест.
+    return create_app(container=create_container(VALIDATION_SETTINGS))
 
 
 @pytest.fixture

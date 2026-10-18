@@ -38,6 +38,12 @@ class FakeAccountRepository:
                 return account
         return None
 
+    async def get_by_user_id(self, user_id: UUID) -> Account | None:
+        for account in self.accounts.values():
+            if account.user_id == user_id:
+                return account
+        return None
+
     async def add(self, account: Account) -> Account:
         if await self.get_by_email(account.email) is not None:
             raise EmailAlreadyTakenError(f"Email {account.email.value} is already taken")
