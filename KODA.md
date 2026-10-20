@@ -101,7 +101,7 @@ backend/app/
 
 ## Dishka — обязательные правила
 
-### @inject или DishkaRoute
+### `@inject` или DishkaRoute
 
 `FromDishka[T]` работает только если на роутере указан `route_class=DishkaRoute`, либо на каждом хендлере стоит `@inject`. Используем `DishkaRoute` на роутере — это автоматически включает инъекцию для всех хендлеров.
 
